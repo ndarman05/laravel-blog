@@ -8,7 +8,7 @@ use App\Models\Post;
 class BlogController extends Controller
 {
     public function index(){
-        $posts = Post::all();
+        $posts = Post::with('author')->latestFirst()->paginate(3);
         return view('blog.index', compact('posts'));
     }
 }
