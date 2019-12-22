@@ -9,7 +9,6 @@ use App\Models\Category;
 class BlogController extends Controller
 {
     public function index(){
-        $categories = Category::with('posts')->orderBy('title', 'asc')->get();
         $posts = Post::with('author')->latestFirst()->paginate(3);
         return view('blog.index', compact('posts', 'categories'));
     }
@@ -18,9 +17,12 @@ class BlogController extends Controller
         return view('blog.show', compact('post'));
     }
 
-    public function category($id){
-        $categories = Category::with('posts')->orderBy('title', 'asc')->get();
-        $posts = Post::with('author')->latestFirst()->where('category_id', $id)->paginate(3);
+    public function category(Category $category){
+        $posts = $category->posts()
+                            ->with('author')
+                            ->latestFirst()
+                            ->where('category_id', $category->id)
+                            ->paginate(3);
         return view('blog.index', compact('posts', 'categories'));
     }
 }
